@@ -3,7 +3,7 @@
   "dataset_version": "v1",
   "dataset_sha256": "91c12c5c8d3f972e63454f375cacb39a76dd8e688bd1bea724a5b1e6e6897237",
   "run_id": "41838f30b7334165b769bdc143027417",
-  "git_commit": "baseline-initial-release",
+  "git_commit": "c51e19d",
   "registered_model_name": "CreditRiskGateModel",
   "registered_model_version": 1,
   "metrics": {
