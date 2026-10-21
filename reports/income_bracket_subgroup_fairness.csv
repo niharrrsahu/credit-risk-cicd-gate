@@ -1,0 +1,4 @@
+Income_Bracket,Total_Count,Actual_High_Risk_Rate,Predicted_High_Risk_Rate,Recall_TPR,FPR,FNR_Missed_Defaults,Precision,F1,PR_AUC
+High,42,0.119,0.1667,0.8,0.0811,0.2,0.5714,0.6667,0.8625
+Low,83,0.2048,0.2651,0.8824,0.1061,0.1176,0.6818,0.7692,0.8589
+Medium,75,0.2133,0.2933,0.875,0.1356,0.125,0.6364,0.7368,0.7257
