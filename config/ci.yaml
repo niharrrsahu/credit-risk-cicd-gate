@@ -50,3 +50,5 @@ quality_gate:
   max_pr_auc_drop_allowed: 0.015
   max_roc_auc_drop_allowed: 0.015
   min_recall_threshold: 0.70
+
+# PR #101: Validated model hyperparameter tuning for CI gate
