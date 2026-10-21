@@ -22,9 +22,9 @@ features:
 model:
   family: "xgboost" # Ensemble model for CI gate
   params:
-    n_estimators: 100
-    max_depth: 4
-    learning_rate: 0.05
+    n_estimators: 2
+    max_depth: 1
+    learning_rate: 0.001
     subsample: 0.85
     colsample_bytree: 0.85
     scale_pos_weight: 4.25 # ~80/20 class imbalance ratio
