@@ -9,10 +9,6 @@ venv/
 .venv/
 ENV/
 
-# Data versioning: Ignore raw CSVs from git history (tracked via data_manifest.json / DVC)
-data/raw/*.csv
-data/processed/*.csv
-
 # Pytest / coverage
 .pytest_cache/
 .coverage

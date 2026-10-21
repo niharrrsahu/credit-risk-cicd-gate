@@ -274,9 +274,9 @@ def build_academic_pdf(output_path="reports/FINAL_PROJECT_REPORT.pdf"):
 
     t6_data = [
         [Paragraph("PR Scenario", table_header), Paragraph("Candidate Condition", table_header), Paragraph("Observed Metrics vs Baseline (0.7978)", table_header), Paragraph("Gate Verdict &amp; Merging Action", table_header)],
-        [Paragraph("PR #101 (Pass)", table_cell), Paragraph("Tuned XGBoost model optimization", table_cell), Paragraph("PR-AUC: 0.8158 (+0.0180), Recall: 0.8950 (+0.0003)", table_cell), Paragraph("🟢 <b>PASSED</b>: Meets all criteria. Merge approved.", table_cell)],
-        [Paragraph("PR #102 (Regression)", table_cell), Paragraph("Untested feature deletion / bug", table_cell), Paragraph("PR-AUC: 0.4120 (&minus;0.3858), Recall: 0.4500 (Floor breach)", table_cell), Paragraph("🔴 <b>FAILED</b>: Severe drop. Merge blocked.", table_cell)],
-        [Paragraph("PR #103 (Broken Test)", table_cell), Paragraph("Syntax error breaking feature logic", table_cell), Paragraph("Pytest fails on edge-case zero credit limit unit test", table_cell), Paragraph("🔴 <b>FAILED</b>: Fast-fail in Step 1 before training.", table_cell)]
+        [Paragraph("PR #101 (Pass)", table_cell), Paragraph("Tuned XGBoost candidate on v1", table_cell), Paragraph("PR-AUC: 0.7883 (&minus;0.0095), Recall: 0.8684, ROC: 0.9366", table_cell), Paragraph("🟢 <b>PASSED</b>: Meets all criteria. Merge approved.", table_cell)],
+        [Paragraph("PR #102 (Regression)", table_cell), Paragraph("Corrupted labels / bad feature", table_cell), Paragraph("PR-AUC: 0.2206 (&minus;0.5772), Recall: 0.3158 (Floor breach)", table_cell), Paragraph("🔴 <b>FAILED</b>: Severe drop. Merge blocked.", table_cell)],
+        [Paragraph("PR #103 (Broken Test)", table_cell), Paragraph("Syntax error breaking feature logic", table_cell), Paragraph("Pytest fails with Exit 1 on simulated assertion failure", table_cell), Paragraph("🔴 <b>FAILED</b>: Fast-fail in Step 1 before training.", table_cell)]
     ]
     t6 = Table(t6_data, colWidths=[90, 130, 155, 173])
     t6.setStyle(TableStyle([
