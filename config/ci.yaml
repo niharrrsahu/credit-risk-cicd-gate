@@ -1,0 +1,52 @@
+environment: "ci"
+version: "1.0.0"
+seed: 42
+
+data:
+  version: "v1"
+  raw_path: "data/raw/credit_card_customers_v1.csv"
+  processed_dir: "data/processed"
+  test_size: 0.25
+  stratify: true
+  manifest_path: "data/data_manifest.json"
+
+features:
+  id_column: "Customer_ID"
+  target_column: "High_Risk_Customer"
+  utilisation_risk_cutoff: 0.80
+  delinquency_days_threshold: 30
+  high_spend_ratio_threshold: 0.50
+  categorical_impute_strategy: "most_frequent"
+  numerical_impute_strategy: "median"
+
+model:
+  family: "xgboost" # Ensemble model for CI gate
+  params:
+    n_estimators: 100
+    max_depth: 4
+    learning_rate: 0.05
+    subsample: 0.85
+    colsample_bytree: 0.85
+    scale_pos_weight: 4.25 # ~80/20 class imbalance ratio
+    eval_metric: "logloss"
+
+training:
+  cv_folds: 5
+  scoring_metric: "roc_auc"
+  search_type: "fixed"
+
+tracking:
+  experiment_name: "credit-risk-cicd-gate-ci"
+  tracking_uri: "sqlite:///mlflow.db"
+  log_models: true
+  register_model: true
+  registered_model_name: "CreditRiskGateModel"
+
+quality_gate:
+  baseline_metrics_path: "baseline_metrics.json"
+  primary_metric: "pr_auc"
+  secondary_metric: "roc_auc"
+  min_pr_auc_threshold: 0.52
+  max_pr_auc_drop_allowed: 0.015
+  max_roc_auc_drop_allowed: 0.015
+  min_recall_threshold: 0.70

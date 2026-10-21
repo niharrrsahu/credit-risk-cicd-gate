@@ -1,0 +1,49 @@
+environment: "development"
+version: "1.0.0"
+seed: 42
+
+data:
+  version: "v1"
+  raw_path: "data/raw/credit_card_customers_v1.csv"
+  processed_dir: "data/processed"
+  test_size: 0.25
+  stratify: true
+  manifest_path: "data/data_manifest.json"
+
+features:
+  id_column: "Customer_ID"
+  target_column: "High_Risk_Customer"
+  utilisation_risk_cutoff: 0.80
+  delinquency_days_threshold: 30
+  high_spend_ratio_threshold: 0.50
+  categorical_impute_strategy: "most_frequent"
+  numerical_impute_strategy: "median"
+
+model:
+  family: "logistic_regression" # Options: logistic_regression, random_forest, xgboost, lightgbm
+  params:
+    C: 1.0
+    max_iter: 200
+    class_weight: "balanced"
+    solver: "lbfgs"
+
+training:
+  cv_folds: 3
+  scoring_metric: "roc_auc"
+  search_type: "fixed" # "fixed", "grid", "random"
+
+tracking:
+  experiment_name: "credit-risk-cicd-dev"
+  tracking_uri: "sqlite:///mlflow.db"
+  log_models: true
+  register_model: false
+  registered_model_name: "CreditRiskGateModel"
+
+quality_gate:
+  baseline_metrics_path: "baseline_metrics.json"
+  primary_metric: "pr_auc"
+  secondary_metric: "roc_auc"
+  min_pr_auc_threshold: 0.50
+  max_pr_auc_drop_allowed: 0.02
+  max_roc_auc_drop_allowed: 0.02
+  min_recall_threshold: 0.65
