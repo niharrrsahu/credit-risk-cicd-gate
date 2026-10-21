@@ -1,0 +1,59 @@
+name: "Credit Risk CI/CD Quality Gate"
+
+on:
+  pull_request:
+    branches: [ main, master ]
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  quality-gate:
+    name: "Automated Tests, Training & Quality Gate"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout Code"
+        uses: actions/checkout@v4
+
+      - name: "Set up Python 3.11"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: "Install Dependencies"
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: "Step 1: Execute Automated Unit Tests"
+        run: |
+          echo "Running pytest test suite across configuration, features, and pipeline..."
+          python -m pytest -v --tb=short tests/
+
+      - name: "Step 2: Train Candidate Model (CI Configuration)"
+        run: |
+          echo "Training candidate model with config/ci.yaml..."
+          python -c "
+          from src.config_schema import load_config
+          from src.train import train_and_track
+          import json
+          cfg = load_config('config/ci.yaml')
+          res = train_and_track(cfg, run_name='github_actions_ci_run')
+          with open('candidate_metrics.json', 'w') as f:
+              json.dump(res['metrics'], f, indent=2)
+          print('Training finished. Candidate metrics written to candidate_metrics.json')
+          "
+
+      - name: "Step 3: Evaluate CI/CD Quality Gate"
+        run: |
+          echo "Comparing candidate metrics against baseline_metrics.json..."
+          python -m src.gate candidate_metrics.json config/ci.yaml pr_summary.md
+
+      - name: "Step 4: Publish Job Summary"
+        if: always()
+        run: |
+          if [ -f pr_summary.md ]; then
+            cat pr_summary.md >> $GITHUB_STEP_SUMMARY
+          fi
