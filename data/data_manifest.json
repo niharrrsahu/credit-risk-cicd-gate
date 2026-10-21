@@ -1,0 +1,16 @@
+{
+  "v1": {
+    "filename": "credit_card_customers_v1.csv",
+    "sha256": "91c12c5c8d3f972e63454f375cacb39a76dd8e688bd1bea724a5b1e6e6897237",
+    "rows": 800,
+    "cols": 10,
+    "description": "Initial baseline dataset (800 customers)"
+  },
+  "v2": {
+    "filename": "credit_card_customers_v2.csv",
+    "sha256": "e9514b4f5fe1b21b8a5a2ec2f52ff61423a6c9a0cda74111af3f250aa4ca1c09",
+    "rows": 1100,
+    "cols": 10,
+    "description": "Extended dataset with 300 additional customers"
+  }
+}

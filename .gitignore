@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Data versioning: Ignore raw CSVs from git history (tracked via data_manifest.json / DVC)
+data/raw/*.csv
+data/processed/*.csv
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# MLflow local runs and SQLite DB
+mlruns/
+.mlflow/
+mlflow.db
+mlflow.db-journal
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
