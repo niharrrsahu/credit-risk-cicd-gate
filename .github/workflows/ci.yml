@@ -7,6 +7,10 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   quality-gate:
     name: "Automated Tests, Training & Quality Gate"
@@ -29,11 +33,22 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install -e .
 
       - name: "Step 1: Execute Automated Unit Tests"
+        shell: bash
         run: |
           echo "Running pytest test suite across configuration, features, and pipeline..."
-          python -m pytest -v --tb=short tests/
+          python -m pytest -v --tb=short tests/ > pytest_output.log 2>&1 || true
+          cat pytest_output.log
+          echo "### Unit Test Execution Output" >> $GITHUB_STEP_SUMMARY
+          echo '```text' >> $GITHUB_STEP_SUMMARY
+          cat pytest_output.log >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          if grep -E -q "FAILED|ERROR" pytest_output.log; then
+            echo "Unit test suite detected failures or errors!"
+            exit 1
+          fi
 
       - name: "Step 2: Train Candidate Model (CI Configuration)"
         run: |
