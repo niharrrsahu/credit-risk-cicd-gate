@@ -69,6 +69,15 @@ def evaluate_quality_gate(
         )
 
     status_str = "PASSED" if passed else "FAILED"
+
+    reasons_str = "\n- ".join(reasons)
+    if passed:
+        decision_str = "✅ **MERGE ALLOWED**: The candidate model meets all performance criteria without unacceptable regressions."
+    else:
+        decision_str = f"❌ **MERGE BLOCKED**: Quality gate failed for the following reasons:\n- {reasons_str}"
+    pr_status = "✅ OK" if pr_auc_delta >= -gate_cfg.max_pr_auc_drop_allowed else "❌ REGRESSION"
+    roc_status = "✅ OK" if roc_auc_delta >= -gate_cfg.max_roc_auc_drop_allowed else "❌ REGRESSION"
+    recall_status = "✅ OK" if cand_recall >= gate_cfg.min_recall_threshold else "❌ BELOW FLOOR"
     
     # Markdown PR Summary
     summary_md = f"""### 🛡️ CI/CD Credit Risk Quality Gate: **{status_str}**
@@ -77,14 +86,14 @@ def evaluate_quality_gate(
 
 | Metric | Candidate | Baseline (`{baseline_metrics.get('model_family', 'prod')}`) | Delta | Status |
 | :--- | :---: | :---: | :---: | :---: |
-| **PR-AUC (Primary)** | `{cand_pr_auc:.4f}` | `{base_pr_auc:.4f}` | `{pr_auc_delta:+.4f}` | {"✅ OK" if pr_auc_delta >= -gate_cfg.max_pr_auc_drop_allowed else "❌ REGRESSION"} |
-| **ROC-AUC** | `{cand_roc_auc:.4f}` | `{base_roc_auc:.4f}` | `{roc_auc_delta:+.4f}` | {"✅ OK" if roc_auc_delta >= -gate_cfg.max_roc_auc_drop_allowed else "❌ REGRESSION"} |
-| **Recall (Default Capture)** | `{cand_recall:.4f}` | `{base_recall:.4f}` | `{recall_delta:+.4f}` | {"✅ OK" if cand_recall >= gate_cfg.min_recall_threshold else "❌ BELOW FLOOR"} |
+| **PR-AUC (Primary)** | `{cand_pr_auc:.4f}` | `{base_pr_auc:.4f}` | `{pr_auc_delta:+.4f}` | {pr_status} |
+| **ROC-AUC** | `{cand_roc_auc:.4f}` | `{base_roc_auc:.4f}` | `{roc_auc_delta:+.4f}` | {roc_status} |
+| **Recall (Default Capture)** | `{cand_recall:.4f}` | `{base_recall:.4f}` | `{recall_delta:+.4f}` | {recall_status} |
 | **F1-Score** | `{candidate_metrics['f1']:.4f}` | `{baseline_metrics['metrics'].get('f1', 0):.4f}` | `{candidate_metrics['f1'] - baseline_metrics['metrics'].get('f1', 0):+.4f}` | ℹ️ Tracked |
 | **Accuracy** | `{candidate_metrics['accuracy']:.4f}` | `{baseline_metrics['metrics'].get('accuracy', 0):.4f}` | `{candidate_metrics['accuracy'] - baseline_metrics['metrics'].get('accuracy', 0):+.4f}` | ℹ️ Reference |
 
 **Gate Decision:**
-{"🟢 **MERGE ALLOWED**: The candidate model meets all performance criteria without unacceptable regressions." if passed else f"🔴 **MERGE BLOCKED**: Quality gate failed for the following reasons:\n- " + "\n- ".join(reasons)}
+{decision_str}
 """
     results_detail = {
         "passed": passed,
