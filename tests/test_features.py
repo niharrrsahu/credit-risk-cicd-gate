@@ -95,3 +95,7 @@ def test_pipeline_transform_consistency(sample_feature_df):
     X_matrix = preprocessor.fit_transform(sample_feature_df)
     assert X_matrix.shape[0] == len(sample_feature_df)
     assert not np.isnan(X_matrix).any(), "Processed feature matrix contains NaNs"
+
+def test_breaking_logic_pr103():
+    assert 1 == 0, 'Breaking change syntax failure for PR #103'
+
