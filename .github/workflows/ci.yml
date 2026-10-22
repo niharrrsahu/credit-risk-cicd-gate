@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: "Checkout Code"
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: "Set up Python 3.11"
         uses: actions/setup-python@v5
@@ -38,13 +40,27 @@ jobs:
       - name: "Step 1: Execute Automated Unit Tests"
         shell: bash
         run: |
-          echo "Running pytest test suite across configuration, features, and pipeline..."
           python -m pytest -v --tb=short tests/ > pytest_output.log 2>&1 || true
           cat pytest_output.log
           echo "### Unit Test Execution Output" >> $GITHUB_STEP_SUMMARY
           echo '```text' >> $GITHUB_STEP_SUMMARY
           cat pytest_output.log >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: "Push Test Logs"
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B ci-logs
+          cp pytest_output.log test_failure_log.txt
+          git add test_failure_log.txt
+          git commit -m "ci: save test failure log"
+          git push -f https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/niharrrsahu/credit-risk-cicd-gate.git ci-logs
+
+      - name: "Enforce Unit Test Success"
+        shell: bash
+        run: |
           if grep -E -q "FAILED|ERROR" pytest_output.log; then
             echo "Unit test suite detected failures or errors!"
             exit 1
