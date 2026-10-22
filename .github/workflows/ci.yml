@@ -11,6 +11,9 @@ jobs:
   quality-gate:
     name: "Automated Tests, Training & Quality Gate"
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: .
+      PYTHONIOENCODING: "utf-8"
 
     steps:
       - name: "Checkout Code"
@@ -35,16 +38,7 @@ jobs:
       - name: "Step 2: Train Candidate Model (CI Configuration)"
         run: |
           echo "Training candidate model with config/ci.yaml..."
-          python -c "
-          from src.config_schema import load_config
-          from src.train import train_and_track
-          import json
-          cfg = load_config('config/ci.yaml')
-          res = train_and_track(cfg, run_name='github_actions_ci_run')
-          with open('candidate_metrics.json', 'w') as f:
-              json.dump(res['metrics'], f, indent=2)
-          print('Training finished. Candidate metrics written to candidate_metrics.json')
-          "
+          python scripts/ci_train.py
 
       - name: "Step 3: Evaluate CI/CD Quality Gate"
         run: |
